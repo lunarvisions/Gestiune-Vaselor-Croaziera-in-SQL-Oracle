@@ -1,0 +1,460 @@
+--TABEL TIP_CLIENT:
+create table TIP_CLIENT
+(ID_TIP_CLIENT number(5) primary key,
+TIP_CLIENT varchar2(20)
+constraint TIP_CLIENT_CK check(TIP_CLIENT in('COPIL', 'ADULT'))
+);
+--TABEL CLIENTI:
+create table CLIENTI
+(
+    ID_CLIENT number(5) primary key,
+    ID_TIP_CLIENT number(5),
+    CNP number(13),
+    NUME varchar2(20),
+    PRENUME varchar2(20),
+    SEX varchar2(10),
+    EMAIL varchar2(30),
+    TELEFON varchar2(15),
+    TARA varchar2(20),
+    ORAS varchar2(20),
+    ADRESA varchar2(30),
+    COD_POSTAL number(6),
+    constraint ID_TIP_CLIENT_FK foreign key (ID_TIP_CLIENT) references TIP_CLIENT (ID_TIP_CLIENT),
+    constraint CNP_UQ unique (CNP),
+    constraint NUME_NN check (NUME is not null),
+    constraint SEX_CK check (SEX in ('FEMININ', 'MASCULIN'))
+);
+ 
+--TABEL COMPANII:
+create table COMPANII (
+    ID_COMPANIE number(5) primary key,
+    NUME_COMPANIE varchar2(20));
+ 
+--TABEL CATEGORI CABINE:
+create table CATEGORII_CABINE (
+    ID_CLASA number(3) primary key,
+    NUME_CLASA varchar2(20)
+        constraint NUME_CLASA_CK check (NUME_CLASA in ('LUX', 'ECONOMIC', 'STANDARD')));
+--TABEL VASE:
+create table VASE
+(
+    ID_VAS number(5) primary key,
+    ID_COMPANIE number(5),
+    MODEL varchar2(20),
+    CAPACITATE number(5),
+    constraint ID_COMPANIE_FK foreign key (ID_COMPANIE) references COMPANII (ID_COMPANIE));
+ 
+--TABEL TARI:
+create table TARI (
+    ID_TARA number(5) primary key,
+    NUME_TARA varchar2(20));
+ 
+--TABEL ORASE:
+create table ORASE (
+    ID_ORAS number(5) primary key,
+    ID_TARA number(5),
+    NUME_ORAS varchar2(20));
+ 
+--TABEL PORTURI:
+create table PORTURI (
+    ID_PORT number(5) primary key,
+    ID_ORAS number(5),
+    NUME_PORT varchar2(50));
+ 
+ 
+--TABEL CROAZIERA:
+create table CROAZIERA (
+    ID_CROAZIERA number(5) primary key,
+    ID_CLIENT number(5),
+    ID_CLASA number(5),
+    ID_COMPANIE number(5),
+    ID_VAS number(5),
+    ID_PORT number(5),
+    DATA_IMBARCARE date,
+    ORA_IMBARCARE varchar2(20),
+    DURATA_CROAZIERA varchar2(10),
+    INTARZIERE varchar2(10),
+    PRET_BILET number(5),
+    constraint FK_ID_CLIENT foreign key (ID_CLIENT) references CLIENTI (ID_CLIENT),
+    constraint FK_ID_CLASA foreign key (ID_CLASA) references CATEGORII_CABINE (ID_CLASA),
+    constraint FK_ID_COMPANIE foreign key (ID_COMPANIE) references COMPANII (ID_COMPANIE),
+    constraint FK_ID_VAS foreign key (ID_VAS) references VASE (ID_VAS),
+    constraint FK_ID_PORT foreign key (ID_PORT) references PORTURI (ID_PORT));
+ 
+ 
+ 
+--Adăugarea unei noi coloane NR_LOC în tabelul CROAZIERA:
+ 
+alter table CROAZIERA add NR_LOC number(3);
+ 
+--Modificarea tipului de date al coloanei NR_LOC din tabelul CROAZIERA:
+ 
+alter table CROAZIERA modify NR_LOC number(5);
+ 
+--Ștergerea coloanei NR_LOC din tabelul CROAZIERA:
+ 
+alter table CROAZIERA drop column NR_LOC;
+ 
+--Redenumirea tabelei PORTURI:
+ 
+alter table PORTURI rename to PORTURII;
+ 
+--Adăugarea unei noi restricții asupra coloanei nume:
+ 
+alter table CLIENTI
+add constraint NUME_UQ unique (NUME);
+ 
+select *
+from USER_CONSTRAINTS;
+--Dezactivarea unei restricții:
+alter table CLIENTI
+disable constraint NUME_UQ;
+ 
+select *
+from USER_CONSTRAINTS;
+ 
+--Ștergerea unei restricții:
+ 
+alter table CLIENTI drop constraint NUME_UQ;
+ 
+select *
+from USER_CONSTRAINTS;
+ 
+--Popularea fiecărui tabel cu înregistrări
+ 
+insert into TIP_CLIENT values (101, 'ADULT');
+insert into TIP_CLIENT values (102, 'ADULT');
+insert into TIP_CLIENT values (103, 'ADULT');
+insert into TIP_CLIENT values (104, 'ADULT');
+insert into TIP_CLIENT values (105, 'COPIL');
+insert into TIP_CLIENT values (106, 'ADULT');
+insert into TIP_CLIENT values (107, 'ADULT');
+insert into TIP_CLIENT values (108, 'COPIL');
+insert into TIP_CLIENT values (109, 'COPIL');
+insert into TIP_CLIENT values (110, 'ADULT');
+ 
+select *
+from TIP_CLIENT;
+ 
+ 
+--Inserarea datelor în tabelul CLIENTI
+ 
+insert into CLIENTI values(111,101, 1910223338123, 'Gurgu', 'Andrei','MASCULIN', 'gurgu.andrei@gmail.com','0761.234.567','Romania','Bucuresti','Calea Victoriei, nr. 45', 123456);
+insert into CLIENTI values(112,102, 1921203754321, 'Ionescu', 'Ana', 'FEMININ', 'ana.ionescu@yahoo.com','0723.456.789','Romania','Cluj-Napoca','strada Universitatii, nr. 12', 654321);
+insert into CLIENTI values(113,103, 2780630612345, 'Marin', 'Ioana', 'FEMININ', 'ioana.marin@gmail.com','0734.567.890','Romania','Brasov','strada Florilor, nr. 10', 789123);
+insert into CLIENTI values(114,104, 2801020312345, 'Dumitru', 'Cristina', 'FEMININ', 'cristina.dumitru@gmail.com','0756.789.012','Romania','Constanta','Bulevardul Tomis, nr. 7', 321987);
+insert into CLIENTI values(115,105, 1890225769876, 'Stanciu', 'Andrei', 'MASCULIN', 'andrei.stanciu98@yahoo.com','0789.012.345','Romania','Sibiu','Piata Mare, nr. 5', 654789);
+insert into CLIENTI values(116,106, 6531626371111, 'Balan', 'Ioana', 'FEMININ','ioana.balan39@yahoo.com','0745.678.901','Romania','Craiova','strada Primaverii, nr. 20', 456123);
+ 
+insert into CLIENTI values(117,107, 2920511654321, 'Florin', 'Paula','FEMININ', 'paula.florin78@yahoo.com','0771.890.123','Romania','Bucuresti','B-dul Carol I, nr. 3',882123);
+insert into CLIENTI values(118,108, 1901221876789, 'Vasilescu', 'Maria', 'FEMININ', 'maria.vasilescu54@gmail.com','0744.567.123','Romania','Ploiesti','strada Democratiei, nr. 8',847321);
+insert into CLIENTI values(119,109, 2891101423456, 'Radulescu', 'Liviu', 'MASCULIN','liviu.radulescu87@gmail.com','0733.456.789','Romania','Iasi','strada Zorilor, nr. 6',426987);
+insert into CLIENTI values(120,110, 1600616755432, 'Gheorghe', 'Alexandru', 'MASCULIN', 'alexandru.gheorghe@gmail.com','0722.345.678','Romania','Arad','strada Soarelui, nr. 15',387654);
+select * from clienti;
+ 
+--Actualizare email și telefon pentru clientul cu ID 121
+ 
+UPDATE CLIENTI
+SET EMAIL = 'andrei.gurgu@yahoo.com', TELEFON = '0744.123.456'
+WHERE ID_CLIENT = 111;
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+ 
+--Adaugarea inregistrarilor in tabel COMPANII:
+ 
+insert into COMPANII values (211, 'Croaziere Romania');
+insert into COMPANII values (212, 'Costa Cruises');
+insert into COMPANII values (213, 'MSC Cruises');
+insert into COMPANII values (214, 'Ponant');
+insert into COMPANII values (215, 'AIDA Cruises');
+insert into COMPANII values (216, 'TUI Cruises');
+insert into COMPANII values (217, 'Celestyal Cruises');
+insert into COMPANII values (218, 'CroisiEurope');
+insert into COMPANII values (219, 'Scenic Cruises');
+insert into COMPANII values (220, 'Viking Cruises');
+ 
+select *
+from COMPANII;
+ 
+--Adaugarea inregistrarilor in tabel CATEGORII_CABINE
+ 
+insert into CATEGORII_CABINE values (311, 'LUX');
+insert into CATEGORII_CABINE values (312, 'ECONOMIC');
+insert into CATEGORII_CABINE values (313, 'STANDARD');
+insert into CATEGORII_CABINE values (314, 'LUX');
+insert into CATEGORII_CABINE values (315, 'LUX');
+insert into CATEGORII_CABINE values (316, 'ECONOMIC');
+insert into CATEGORII_CABINE values (317, 'STANDARD');
+insert into CATEGORII_CABINE values (318, 'STANDARD');
+insert into CATEGORII_CABINE values (319, 'STANDARD');
+insert into CATEGORII_CABINE values (320, 'STANDARD');
+ 
+select *
+from CATEGORII_CABINE;
+ 
+--Adaugarea inregistrarilor in tabel VASE:
+ 
+insert into VASE values (411, 211, 'Dunărea Star', 300);
+insert into VASE values (412, 212, 'Costa Toscana', 250);
+insert into VASE values (413, 213, 'MSC Seashore', 270);
+insert into VASE values (414, 214, 'Le Commandant Charcot', 200);
+insert into VASE values (415, 215, 'AIDAcosma', 180);
+insert into VASE values (416, 216, 'Mein Schiff Herz', 830);
+insert into VASE values (417, 217, 'Celestyal Crystal', 750);
+insert into VASE values (418, 218, 'MS Symphonie', 460);
+insert into VASE values (419, 219, 'Scenic Jewel', 400);
+insert into VASE values (420, 220, 'Viking Sky', 377);
+ 
+select *
+from VASE;
+ 
+--Adaugarea inregistrarilor in tabel TARI
+ 
+insert into TARI values (511, 'Romania');
+insert into TARI values (512, 'Italia');
+insert into TARI values (513, 'Italia');
+insert into TARI values (514, 'Franta');
+insert into TARI values (515, 'Germania');
+insert into TARI values (516, 'Germania');
+insert into TARI values (517, 'Grecia');
+insert into TARI values (518, 'Franta');
+insert into TARI values (519, 'Elvetia');
+insert into TARI values (520, 'Norvegia');
+ 
+select *
+from TARI;
+--Adaugarea inregistrarilor in tabel ORASE:
+ 
+insert into ORASE values (611, 511, 'Constanta');
+insert into ORASE values (612, 512, 'Genova');
+insert into ORASE values (613, 513, 'Napoli');
+insert into ORASE values (614, 514, 'Marsilia');
+insert into ORASE values (615, 515, 'Hamburg');
+insert into ORASE values (616, 516, 'Kiel');
+insert into ORASE values (617, 517, 'Atena');
+insert into ORASE values (618, 518, 'Strasbourg');
+insert into ORASE values (619, 519, 'Basel');
+insert into ORASE values (620, 520, 'Bergen');
+ 
+select *
+from ORASE;
+ 
+--Adaugarea inregistrarilor in tabel PORTURI:
+ 
+insert into PORTURI values (711, 611, 'Portul Constanta');
+insert into PORTURI values (712, 612, 'Portul Genova');
+insert into PORTURI values (713, 613, 'Portul Napoli');
+insert into PORTURI values (714, 614, 'Portul Marsilia');
+insert into PORTURI values (715, 615, 'Portul Hamburg');
+insert into PORTURI values (716, 616, 'Portul Kiel');
+insert into PORTURI values (717, 617, 'Portul Pireu');
+insert into PORTURI values (718, 618, 'Portul Strasbourg');
+insert into PORTURI values (719, 619, 'Portul Basel');
+insert into PORTURI values (720, 620, 'Portul Bergen');
+ 
+select *
+from PORTURI;
+ 
+ 
+--Adaugarea inregistrarilor in tabel CROAZIERA:
+ 
+insert into CROAZIERA values(801, 111, 311, 211, 411,711,to_date('03.06.2024','dd.mm.yyyy'), '08:45', '1 ora', '5 minute', 450);
+insert into CROAZIERA values(802, 112, 312, 212, 412,712,to_date('15.07.2024','dd.mm.yyyy'), '11:30', '3 ore', 'fara', 420);
+insert into CROAZIERA values(803, 113, 313, 213, 413,713,to_date('27.08.2024','dd.mm.yyyy'), '14:00', '2 ore', '15 minute', 289);
+insert into CROAZIERA values(804, 114, 314, 214, 414,714,to_date('10.09.2024','dd.mm.yyyy'), '16:20', '4 ore', '10 minute', 349);
+insert into CROAZIERA values(805, 115, 315, 215, 415,715,to_date('18.10.2024','dd.mm.yyyy'), '07:50', '5 ore', 'fara', 129);
+insert into CROAZIERA values(806, 116, 316, 216, 416,716,to_date('23.11.2024','dd.mm.yyyy'), '10:15', '2 ore', '5 minute', 500);
+insert into CROAZIERA values(807, 117, 317, 217, 417,717,to_date('05.12.2024','dd.mm.yyyy'), '13:40', '1 ora', '10 minute', 220);
+insert into CROAZIERA values(808, 118, 318, 218, 418,718,to_date('08.01.2025','dd.mm.yyyy'), '20:50', '3 ore', 'fara', 500);
+insert into CROAZIERA values(809, 119, 319, 219, 419,719,to_date('11.03.2025','dd.mm.yyyy'), '09:30', '2 ore', '20 minute', 499);
+insert into CROAZIERA values(810, 120, 320, 220, 420,720,to_date('21.05.2025','dd.mm.yyyy'), '22:10', '6 ore', '15 minute', 370);
+select * from CROAZIERA;
+ 
+ 
+ 
+--Actualizarea inregistrarilor
+ 
+Actualizarea numelui clientului cu ID-ul 112:
+ 
+update CLIENTI
+set NUME = 'Daniel'
+where ID_CLIENT = 112;
+ 
+select NUME
+from CLIENTI
+where ID_CLIENT = 111;
+ 
+--Stergerea si recuperearea unui table
+ 
+drop table ORASE cascade constraints;
+ 
+flashback table ORASE to before drop;
+ 
+ 
+--Union
+select PRENUME
+from CLIENTI
+where initcap(PRENUME) = 'Daniel'
+ 
+union all
+ 
+select NUME_COMPANIE
+from COMPANII
+where initcap(NUME_COMPANIE) = 'Croaziere Romania';
+ 
+ 
+select ID_COMPANIE id, NUME_COMPANIE nume
+from COMPANII
+ 
+union
+ 
+select ID_CLIENT id, NUME
+from CLIENTI;
+ 
+ 
+--Intersect
+-- Intersect între modele și capacități de vase
+ 
+select MODEL, CAPACITATE * 1
+from VASE
+ 
+intersect
+ 
+select MODEL, CAPACITATE
+from VASE;
+ 
+--Intersect între data îmbarcării și prețul biletului din croaziere
+ 
+select DATA_IMBARCARE, PRET_BILET * 1
+from CROAZIERA
+ 
+intersect
+ 
+select DATA_IMBARCARE, PRET_BILET
+from CROAZIERA;
+--Minus
+select *
+from CROAZIERA
+where pret_bilet between 199 and 300
+ 
+minus
+ 
+select *
+from CROAZIERA
+where pret_bilet in (200, 350);
+ 
+--Decode
+select id_croaziera, pret_bilet,
+       pret_bilet * decode(id_croaziera,
+                            801, 1.1,
+                            809, 1.2,
+                            1.0) as pret_majorat
+from CROAZIERA;
+ 
+--Case
+select id_croaziera, data_imbarcare, pret_bilet,
+       case
+           when pret_bilet > 450 then 'bilet scump'
+           when pret_bilet between 200 and 450 then 'pret mediu'
+           else 'bilet ieftin'
+       end as clasificare_bilet
+from CROAZIERA;
+ 
+--Functii Single-Row
+select *
+from CLIENTI
+where ID_CLIENT in (select ID_CLIENT from CLIENTI where lower(NUME) = 'dan');
+ 
+select id_client, nume
+from CLIENTI
+where nume like upper('G%');
+ 
+--Functii Grup
+select min(PRET_BILET), max(PRET_BILET)
+from CROAZIERA;
+ 
+select min(CAPACITATE), max(CAPACITATE)
+from VASE;
+ 
+select min(DATA_IMBARCARE), max(DATA_IMBARCARE)
+from CROAZIERA;
+--Jonctiuni
+select cl.ID_CLIENT, cl.NUME, cl.PRENUME, c.DATA_IMBARCARE, c.PRET_BILET
+from CLIENTI cl, CROAZIERA c
+where cl.ID_CLIENT = c.ID_CLIENT
+  and c.PRET_BILET > 200
+order by cl.NUME asc;
+ 
+select t.MODEL, t.CAPACITATE, c.DATA_IMBARCARE, c.PRET_BILET
+from VASE t, CROAZIERA c
+where t.ID_VAS = c.ID_VAS
+  and c.PRET_BILET > 400
+order by c.PRET_BILET desc;
+ 
+--View-uri
+create or replace view V_CLIENTI_115
+as select *
+from CLIENTI
+where ID_CLIENT = 115;
+ 
+update V_CLIENTI_115
+set NUME = 'Andrei';
+ 
+select *
+from V_CLIENTI_115;
+ 
+create or replace view V_CROAZIERA
+as select DATA_PLECARE, PRET_BILET
+from CROAZIERA;
+ 
+update V_CROAZIERA
+set PRET_BILET = PRET_BILET * 1.3;
+ 
+select *
+from V_CROAZIERA
+where extract(month from DATA_PLECARE) = 2;
+ 
+select *
+from user_views;
+--Indecsi
+select *
+from CROAZIERA
+where PRET_BILET between 300 and 400;
+ 
+create index idx_PRET_BILET on CROAZIERA(PRET_BILET);
+ 
+select *
+from VASE
+where CAPACITATE between 200 and 300;
+ 
+create index idx_CAPACITATE on VASE(CAPACITATE);
+ 
+select *
+from user_indexes;
+ 
+--Sinonime
+create synonym cl for CLIENTI;
+ 
+create synonym V for VASE;
+ 
+select *
+from user_synonyms;
+ 
+--Secvente
+create sequence s_tari
+start with 1 increment by 1 maxvalue 100;
+ 
+insert into TARI values (s_tari.nextval, 'NUME_TARA');
+ 
+create sequence s_companii
+start with 1 increment by 1 maxvalue 100;
+ 
+insert into COMPANII values (s_companii.nextval, 'NUME_COMPANIE');
+ 
+select *
+from user_sequences;
